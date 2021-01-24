@@ -1,8 +1,10 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_rq2 import RQ
 
 app = Flask(__name__)
 app.debug = True
+rq = RQ(app)
 db = SQLAlchemy(app)
 
 news = [

@@ -4,8 +4,10 @@ import bs4
 import requests
 
 from datasources.date_format import get_date
+from main import rq
 
 
+@rq.job(timeout=600)
 def get_all_news(url):
     res = requests.get(url)
     soup = bs4.BeautifulSoup(res.text, "html.parser")
@@ -17,20 +19,26 @@ def get_all_news(url):
         link = link.strip('/press/news/')
         links.append(link)
     news_list = []
+    i = 0
     for link in links:
+        article = get_article(url, link)
+        article.append(images[i].attrs['src'])
+        news_list.append(article)
+        i += 1
+    return news_list
+
+
+def get_article(url, link):
         result = requests.get(f'{url}{link}')
         soup = bs4.BeautifulSoup(result.text, "html.parser")
         title = soup.select('h1.pagetitle__content-title')
         pub_date = soup.select('div.pagetitle__content-date')
-        post_data = []
+        article_data = []
         if len(pub_date) > 0:
             date_str = pub_date[0].getText()
             date_formatted = get_date(date_str)
-            post_data.append(title[0].getText())
-            post_data.append(date_formatted)
-            for image in images:
-                post_data.append(image.attrs['src'])
+            article_data.append(title[0].getText())
+            article_data.append(date_formatted)
             now = datetime.datetime.now()
-            post_data.append(now.strftime("%d-%m-%Y %H:%M"))
-        news_list.append(post_data)
-    return news_list
+            article_data.append(now.strftime("%d-%m-%Y %H:%M"))
+        return article_data
