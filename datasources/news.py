@@ -29,16 +29,16 @@ def get_all_news(url):
 
 
 def get_article(url, link):
-        result = requests.get(f'{url}{link}')
-        soup = bs4.BeautifulSoup(result.text, "html.parser")
-        title = soup.select('h1.pagetitle__content-title')
-        pub_date = soup.select('div.pagetitle__content-date')
-        article_data = []
-        if len(pub_date) > 0:
-            date_str = pub_date[0].getText()
-            date_formatted = get_date(date_str)
-            article_data.append(title[0].getText())
-            article_data.append(date_formatted)
-            now = datetime.datetime.now()
-            article_data.append(now.strftime("%d-%m-%Y %H:%M"))
-        return article_data
+    result = requests.get(f'{url}{link}')
+    soup = bs4.BeautifulSoup(result.text, "html.parser")
+    title = soup.select('h1.pagetitle__content-title')
+    pub_date = soup.select('div.pagetitle__content-date')
+    article_data = []
+    if len(pub_date) > 0:
+        date_str = pub_date[0].getText()
+        date_formatted = get_date(date_str)
+        article_data.append(title[0].getText())
+        article_data.append(date_formatted)
+        now = datetime.datetime.now()
+        article_data.append(now.strftime("%d-%m-%Y %H:%M"))
+    return article_data

@@ -1,6 +1,5 @@
 from datasources.news import get_all_news
 
-
 job = get_all_news.queue('https://mosmetro.ru/press/news/')
 
 
